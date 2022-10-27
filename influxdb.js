@@ -20,7 +20,7 @@ module.exports = function (RED) {
         this.name = n.name;
 
         var clientOptions = null;
-        
+
         if (!n.influxdbVersion) {
             n.influxdbVersion = VERSION_1X;
         }
@@ -60,6 +60,7 @@ module.exports = function (RED) {
 
             clientOptions = {
                 url: n.url,
+                timeout: parseInt(n.timeout),
                 rejectUnauthorized: n.rejectUnauthorized,
                 token
             }
@@ -95,7 +96,7 @@ module.exports = function (RED) {
         } else if (typeof value === 'number') {
             point.floatField(name, value);
         } else if (typeof value === 'string') {
-            // string values with numbers ending with 'i' are considered integers            
+            // string values with numbers ending with 'i' are considered integers
             if (isIntegerString(value)) {
                 value = parseInt(value.substring(0,value.length-1));
                 point.intField(name, value);
@@ -160,7 +161,7 @@ module.exports = function (RED) {
                     node.client.writePoint(point);
                 }
             }
-    
+
             node.client.flush(true).then(() => {
                     done();
                 }).catch(error => {
@@ -376,7 +377,7 @@ module.exports = function (RED) {
 
                 msg.payload.forEach(element => {
                     let point = new Point(element.measurement);
-        
+
                     // time is reserved as a field name still! will be overridden by the timestamp below.
                     addFieldsToPoint(point, element.fields);
 

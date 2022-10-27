@@ -15,6 +15,7 @@
             "use-advanced-query":"Advanced Query Options",
             "version":"Version",
             "url": "URL",
+            "timeout": "Timeout (ms)",
             "token": "Token",
             "reject-unauthorized": "Verify server certificate",
             "org": "Organization",

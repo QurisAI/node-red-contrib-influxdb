@@ -1,4 +1,4 @@
-<script type="text/html" data-template-name="influxdb">    
+<script type="text/html" data-template-name="influxdb">
     <div class="form-row">
         <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
         <input type="text" id="node-config-input-name" data-i18n="[placeholder]node-red:common.label.name">
@@ -6,9 +6,9 @@
     <div class="form-row">
         <label for="node-config-input-influxdbVersion"><i class="fa fa-code-fork"></i> <span data-i18n="influxdb.label.version"></span></label>
         <select type="text" style="width: 100px" id="node-config-input-influxdbVersion">
-            <option value="1.x">1.x</option> 
-            <option value="1.8-flux">1.8-flux</option> 
-            <option value="2.0">2.0</option> 
+            <option value="1.x">1.x</option>
+            <option value="1.8-flux">1.8-flux</option>
+            <option value="2.0">2.0</option>
         </select>
     </div>
     <div class="form-row" id="node-config-row-hostname-port">
@@ -24,6 +24,10 @@
     <div class="form-row" id="node-config-row-database">
         <label for="node-config-input-database"><i class="fa fa-database"></i> <span data-i18n="influxdb.label.database"></span></label>
         <input type="text" id="node-config-input-database">
+    </div>
+    <div class="form-row" id="node-config-row-timeout">
+        <label for="node-config-input-timeout"><i class="fa fa-clock-o"></i> <span data-i18n="influxdb.label.timeout"></span></label>
+        <input class="input-append-left" type="text" id="node-config-input-timeout" placeholder=10000>
     </div>
     <div class="form-row" id="node-config-row-username">
         <label for="node-config-input-username"><i class="fa fa-user"></i> <span data-i18n="node-red:common.label.username"></span></label>
@@ -61,7 +65,7 @@
         color: "rgb(218, 196, 180)",
         defaults: {
             hostname: {value: "127.0.0.1", required: true},
-            port: {value: 8086, required: true},            
+            port: {value: 8086, required: true},
 			protocol: {value: "http", required: true},
             database: {value: "database",
                 validate:function(db) {
@@ -85,6 +89,7 @@
                     return true;
                 }
             },
+            timeout: {value: 10000, required: true, validate: RED.validators.number()},
             rejectUnauthorized: {value: true}
         },
         credentials: {
@@ -110,37 +115,40 @@
                 }
             }
 
-            function update18Options() {                
+            function update18Options() {
                 $("#node-config-row-hostname-port").show();
                 $("#node-config-row-url").hide();
                 $("#node-config-row-database").show();
                 $("#node-config-row-username").show();
                 $("#node-config-row-password").show();
                 $("#node-config-row-token").hide();
-                $("#node-config-row-rejectUnauthorized").hide();   
-                $("#node-config-row-enableSecureConnection").show();                
+                $("#node-config-row-rejectUnauthorized").hide();
+                $("#node-config-row-enableSecureConnection").show();
+                $("#node-config-row-timeout").hide();
             }
 
-            function update18FluxOptions() {                
+            function update18FluxOptions() {
                 $("#node-config-row-hostname-port").hide();
                 $("#node-config-row-url").show();
                 $("#node-config-row-database").hide();
                 $("#node-config-row-username").show();
                 $("#node-config-row-password").show();
                 $("#node-config-row-token").hide();
-                $("#node-config-row-rejectUnauthorized").show();   
-                $("#node-config-row-enableSecureConnection").hide();   
+                $("#node-config-row-rejectUnauthorized").show();
+                $("#node-config-row-enableSecureConnection").hide();
+                $("#node-config-row-timeout").hide();
             }
 
-            function update20Options() {                
+            function update20Options() {
                 $("#node-config-row-hostname-port").hide();
                 $("#node-config-row-url").show();
                 $("#node-config-row-database").hide();
                 $("#node-config-row-username").hide();
                 $("#node-config-row-password").hide();
                 $("#node-config-row-token").show();
-                $("#node-config-row-rejectUnauthorized").show();   
-                $("#node-config-row-enableSecureConnection").hide();  
+                $("#node-config-row-rejectUnauthorized").show();
+                $("#node-config-row-enableSecureConnection").hide();
+                $("#node-config-row-timeout").show();
             }
 
             $("#node-config-input-influxdbVersion").change(function () {
@@ -159,7 +167,7 @@
                         $("#node-config-input-usetls").on("click", function () {
                             updateTLSOptions();
                         });
-                }   
+                }
             });
             // if version not set assume 1.x to support older flows
             let selected = $("#node-config-input-influxdbVersion option:selected").val();
@@ -201,31 +209,31 @@
             <div class="form-row">
                 <label for="node-input-precision" style="width:35%"><i class="fa fa-clock-o"></i> <span data-i18n="influxdb.label.time-precision"></span></label>
                 <select type="text" id="node-input-precision" style="width:55%">
-                    <option value="">Default</option> 
-                    <option value="n">Nanoseconds (n)</option> 
-                    <option value="u">Microseconds (u)</option> 
-                    <option value="ms">Milliseconds (ms)</option> 
+                    <option value="">Default</option>
+                    <option value="n">Nanoseconds (n)</option>
+                    <option value="u">Microseconds (u)</option>
+                    <option value="ms">Milliseconds (ms)</option>
                     <option value="s">Seconds (s)</option>
                     <option value="m">Minute (m)</option>
                     <option value="h">Hour (h)</option>
                     <option value="d">Day (d)</option>
                     <option value="w">Week (w)</option>
-                </select>  
+                </select>
             </div>
             <div class="form-row">
                 <label for="node-input-retentionPolicy" style="width:35%"><i class="fa fa-gavel"></i> <span data-i18n="influxdb.label.retention-policy"></span></label>
                 <input type="text" style="width:55%" id="node-input-retentionPolicy">
             </div>
-        </div>  
+        </div>
     </div>
     <div class="form-row" id="node-input-row-precisionV18FluxV20">
         <label for="node-input-precisionV18FluxV20" style="width:35%"><i class="fa fa-clock-o"></i> <span data-i18n="influxdb.label.time-precision"></span></label>
         <select type="text" id="node-input-precisionV18FluxV20" style="width:55%">
-            <option value="ns">Nanoseconds (ns)</option> 
-            <option value="us">Microseconds (us)</option> 
-            <option value="ms">Milliseconds (ms)</option> 
+            <option value="ns">Nanoseconds (ns)</option>
+            <option value="us">Microseconds (us)</option>
+            <option value="ms">Milliseconds (ms)</option>
             <option value="s">Seconds (s)</option>
-        </select>  
+        </select>
     </div>
     <div class="form-row" id="node-input-row-retentionPolicyV18Flux">
         <label for="node-input-retentionPolicyV18Flux" style="width:35%"><i class="fa fa-gavel"></i> <span data-i18n="influxdb.label.retention-policy"></span></label>
@@ -238,18 +246,18 @@
 
 <script type="text/html" data-help-name="influxdb out">
     <p>A simple influxdb output node to write values and tags to an influxdb measurement.</p>
-    <p>The fields and tags to write are in <b>msg.payload</b>. If <b>msg.payload</b> is a string, number, or boolean, 
+    <p>The fields and tags to write are in <b>msg.payload</b>. If <b>msg.payload</b> is a string, number, or boolean,
     it will be written as a single value to the specified measurement (called <i>value</i>).</p>
     <p>If <b>msg.payload</b> is an object containing multiple properties, the fields will be written to the measurement.</p>
-    <p>If <b>msg.payload</b> is an array containing two objects, the first object will be written as the set of named fields, 
+    <p>If <b>msg.payload</b> is an array containing two objects, the first object will be written as the set of named fields,
     the second is the set of named tags.</p>
     <p>Finally, if <b>msg.payload</b> is an array of arrays, it will be written as a series of points containing fields and tags.</p>
-    <p>If the <i>measurement</i> field is not set in the node configuration, the user can send in data with a specified measurement 
+    <p>If the <i>measurement</i> field is not set in the node configuration, the user can send in data with a specified measurement
         name in <b>msg.measurement</b> to overwrite the <i>measurement</i> field in the configuration of the node.</p>
 
     <p><b>InfluxDB 1.x Mode</b></p>
     <p>Check <i>Advanced Query Options</i> to specify a time precision and retention policy for the insertion.<p>
-    <p>The advanced query options <i>Time Precision</i> and <i>Retention Policy</i> can be overwritten using 
+    <p>The advanced query options <i>Time Precision</i> and <i>Retention Policy</i> can be overwritten using
     message properties <b>msg.precision</b> and <b>msg.retentionPolicy</b>.</p>
 
     <p><b>InfluxDB 1.8 Flux and InfluxDB 2.0 Mode</b></p>
@@ -334,7 +342,7 @@
                 $("#advanced-options-div").show();
             }
 
-            function update18Options() {                
+            function update18Options() {
                 $("#node-input-row-org").hide();
                 $("#node-input-row-bucket").hide();
                 $("#node-input-row-database").hide();
@@ -344,9 +352,9 @@
                 $("#node-warning-retention-policy").show();
             }
 
-            function update18FluxOptions() {       
+            function update18FluxOptions() {
                 $("#node-input-row-org").hide();
-                $("#node-input-row-bucket").hide();         
+                $("#node-input-row-bucket").hide();
                 $("#node-input-row-database").show();
                 $("#node-input-row-enableAdvancedOptions").hide();
                 $("#node-input-row-precisionV18FluxV20").show();
@@ -356,7 +364,7 @@
 
             function update20Options() {
                 $("#node-input-row-org").show();
-                $("#node-input-row-bucket").show();           
+                $("#node-input-row-bucket").show();
                 $("#node-input-row-database").hide();
                 $("#node-input-row-enableAdvancedOptions").hide();
                 $("#node-input-row-precisionV18FluxV20").show();
@@ -367,10 +375,10 @@
             $("#node-input-influxdb").change(function () {
                 switch (selectedVersion()) {
                     case 'v1.8-flux':
-                        update18FluxOptions();                    
+                        update18FluxOptions();
                         break;
                     case 'v2.0':
-                        update20Options();                    
+                        update20Options();
                         break;
                     default:
                         update18Options();
@@ -423,31 +431,31 @@
             <div class="form-row">
                 <label for="node-input-precision" style="width:35%"><i class="fa fa-clock-o"></i> <span data-i18n="influxdb.label.time-precision"></span></label>
                 <select type="text" id="node-input-precision" style="width:55%">
-                    <option value="">Default</option> 
-                    <option value="n">Nanoseconds (n)</option> 
-                    <option value="u">Microseconds (u)</option> 
-                    <option value="ms">Milliseconds (ms)</option> 
+                    <option value="">Default</option>
+                    <option value="n">Nanoseconds (n)</option>
+                    <option value="u">Microseconds (u)</option>
+                    <option value="ms">Milliseconds (ms)</option>
                     <option value="s">Seconds (s)</option>
                     <option value="m">Minute (m)</option>
                     <option value="h">Hour (h)</option>
                     <option value="d">Day (d)</option>
                     <option value="w">Week (w)</option>
-                </select>  
+                </select>
             </div>
             <div class="form-row">
                 <label for="node-input-retentionPolicy" style="width:35%"><i class="fa fa-gavel"></i> <span data-i18n="influxdb.label.retention-policy"></span></label>
                 <input type="text" style="width:55%" id="node-input-retentionPolicy">
             </div>
-        </div>  
+        </div>
     </div>
     <div class="form-row" id="node-input-row-precisionV18FluxV20">
         <label for="node-input-precisionV18FluxV20" style="width:35%"><i class="fa fa-clock-o"></i> <span data-i18n="influxdb.label.time-precision"></span></label>
         <select type="text" id="node-input-precisionV18FluxV20" style="width:55%">
-            <option value="ns">Nanoseconds (ns)</option> 
-            <option value="us">Microseconds (us)</option> 
-            <option value="ms">Milliseconds (ms)</option> 
+            <option value="ns">Nanoseconds (ns)</option>
+            <option value="us">Microseconds (us)</option>
+            <option value="ms">Milliseconds (ms)</option>
             <option value="s">Seconds (s)</option>
-        </select>  
+        </select>
     </div>
     <div class="form-row" id="node-input-row-retentionPolicyV18Flux">
         <label for="node-input-retentionPolicyV18Flux" style="width:35%"><i class="fa fa-gavel"></i> <span data-i18n="influxdb.label.retention-policy"></span></label>
@@ -464,7 +472,7 @@
     fields of the point.  If supplied, the <b>tags</b> property will contain the tags for the point. To set the time
     for the point, supply a <b>timestamp</b> property.</p>
     <p>Check <i>Advanced Query Options</i> to specify a time precision and retention policy for the insertion.<p>
-    <p>The advanced query options <i>Time Precision</i> and <i>Retention Policy</i> can be overwritten using 
+    <p>The advanced query options <i>Time Precision</i> and <i>Retention Policy</i> can be overwritten using
     message properties <b>msg.precision</b> and <b>msg.retentionPolicy</b>.</p>
 </script>
 
@@ -518,7 +526,7 @@
             return this.name ? "node_label_italic" : "";
         },
         oneditprepare: function() {
-            function update18Options() {                
+            function update18Options() {
                 $("#node-input-row-org").hide();
                 $("#node-input-row-bucket").hide();
                 $("#node-input-row-database").hide();
@@ -528,9 +536,9 @@
                 $("#node-warning-retention-policy").show();
             }
 
-            function update18FluxOptions() {       
+            function update18FluxOptions() {
                 $("#node-input-row-org").hide();
-                $("#node-input-row-bucket").hide();         
+                $("#node-input-row-bucket").hide();
                 $("#node-input-row-database").show();
                 $("#node-input-row-enableAdvancedOptions").hide();
                 $("#node-input-row-precisionV18FluxV20").show();
@@ -540,7 +548,7 @@
 
             function update20Options() {
                 $("#node-input-row-org").show();
-                $("#node-input-row-bucket").show();           
+                $("#node-input-row-bucket").show();
                 $("#node-input-row-database").hide();
                 $("#node-input-row-enableAdvancedOptions").hide();
                 $("#node-input-row-precisionV18FluxV20").show();
@@ -550,16 +558,16 @@
             $("#node-input-influxdb").change(function () {
                 switch (selectedVersion()) {
                     case 'v1.8-flux':
-                        update18FluxOptions();                    
+                        update18FluxOptions();
                         break;
                     case 'v2.0':
-                        update20Options();                    
+                        update20Options();
                         break;
                     default:
                         update18Options();
                 }
             });
-            
+
             $("#advanced-options-checkbox").change( function () {
                 if ($('#advanced-options-checkbox').is(":checked")) {
                     $("#advanced-options-div").show();
@@ -602,29 +610,29 @@
     </div>
     <div class="form-row" id="node-input-row-extras">
         <input type="checkbox" id="node-input-rawOutput" style="display: inline-block; width: auto; vertical-align: top;">
-        <label for="node-input-rawOutput"><span data-i18n="influxdb.label.use-raw-output"></span></label>        
+        <label for="node-input-rawOutput"><span data-i18n="influxdb.label.use-raw-output"></span></label>
         <input type="checkbox" id="advanced-options-checkbox" style="display: inline-block; width: auto; vertical-align: top;">
         <label for="advanced-options-checkbox" style="width: 60%;"><span data-i18n="influxdb.label.use-advanced-query"></span></label>
         <div id="advanced-options-div" class="hide" style="margin-left: 20px; margin-top: 10px;">
             <div class="form-row">
                 <label for="node-input-precision" style="width:35%"><i class="fa fa-clock-o"></i> <span data-i18n="influxdb.label.time-precision"></span></label>
                 <select type="text" id="node-input-precision" style="width:55%">
-                    <option value="">Default</option> 
-                    <option value="n">Nanoseconds (n)</option> 
-                    <option value="u">Microseconds (u)</option> 
-                    <option value="ms">Milliseconds (ms)</option> 
+                    <option value="">Default</option>
+                    <option value="n">Nanoseconds (n)</option>
+                    <option value="u">Microseconds (u)</option>
+                    <option value="ms">Milliseconds (ms)</option>
                     <option value="s">Seconds (s)</option>
                     <option value="m">Minute (m)</option>
                     <option value="h">Hour (h)</option>
                     <option value="d">Day (d)</option>
                     <option value="w">Week (w)</option>
-                </select>  
+                </select>
             </div>
             <div class="form-row">
                 <label for="node-input-retentionPolicy" style="width:35%"><i class="fa fa-gavel"></i> <span data-i18n="influxdb.label.retention-policy"></span></label>
                 <input type="text" style="width:55%" id="node-input-retentionPolicy">
             </div>
-        </div>  
+        </div>
     </div>
     <div>
         <input type="hidden" id="node-input-query">
@@ -648,7 +656,7 @@
     check the <i>Raw Output</i> checkbox.</p>
     <p>Check <i>Advanced Query Options</i> to specify a time precision and retention policy for the query.<p>
     <p>The raw output configuration can be overwritten by the message property <b>msg.rawOutput</b>.</p>
-    <p>The advanced query options <i>Time Precision</i> and <i>Retention Policy</i> can be overwritten using 
+    <p>The advanced query options <i>Time Precision</i> and <i>Retention Policy</i> can be overwritten using
     message properties <b>msg.precision</b> and <b>msg.retentionPolicy</b>.</p>
 
     <p>&nbsp;</p><p><b>InfluxDB 1.8 Flux and InfluxDB 2.0</b></p>
@@ -724,7 +732,7 @@
                 $("#node-input-row-extras").show();
             }
 
-            function update18FluxOptions() {                
+            function update18FluxOptions() {
                 $("#node-input-row-org").hide();
                 $("#node-input-row-extras").hide();
             }
@@ -737,10 +745,10 @@
             $("#node-input-influxdb").change(function () {
                 switch (selectedVersion()) {
                     case 'v1.8-flux':
-                        update18FluxOptions();                    
+                        update18FluxOptions();
                         break;
                     case 'v2.0':
-                        update20Options();                    
+                        update20Options();
                         break;
                     default:
                         update18Options();
@@ -751,7 +759,7 @@
             $("#node-input-query").val(this.editor.getValue());
             this.editor.destroy();
             delete this.editor;
-            
+
             // reset inputs if we are not using advanced options
             if (!$("#advanced-options-checkbox").is(':checked')) {
                 $("#node-input-precision").val("");
